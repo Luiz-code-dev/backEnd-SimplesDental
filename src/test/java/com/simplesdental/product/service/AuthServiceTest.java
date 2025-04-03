@@ -57,6 +57,7 @@ class AuthServiceTest {
                 .firstName("Admin")
                 .lastName("User")
                 .role(User.Role.ADMIN)
+                .active(true)
                 .build();
 
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
@@ -102,9 +103,18 @@ class AuthServiceTest {
                 .role(User.Role.USER)
                 .build();
 
+        var savedUser = User.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .password("encodedPassword")
+                .role(request.getRole())
+                .active(true)
+                .build();
+
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-        when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArgument(0));
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
         when(jwtService.generateToken(any(User.class))).thenReturn("token");
 
         // Act
@@ -145,13 +155,13 @@ class AuthServiceTest {
                 .firstName("Test")
                 .lastName("User")
                 .role(User.Role.USER)
+                .active(true)
                 .build();
 
-        when(jwtService.extractUsername(anyString())).thenReturn(email);
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
 
         // Act
-        var response = authService.getUserContext("token");
+        var response = authService.getUserContext(email);
 
         // Assert
         assertNotNull(response);
@@ -165,12 +175,10 @@ class AuthServiceTest {
     @Test
     void getUserContext_WithInvalidEmail_ShouldThrowException() {
         // Arrange
-        var email = "test@example.com";
-
-        when(jwtService.extractUsername(anyString())).thenReturn(email);
+        var email = "nonexistent@example.com";
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(IllegalStateException.class, () -> authService.getUserContext("token"));
+        assertThrows(IllegalStateException.class, () -> authService.getUserContext(email));
     }
 }

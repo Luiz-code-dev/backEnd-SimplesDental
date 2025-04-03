@@ -26,5 +26,6 @@ public class RegisterRequest {
     @NotBlank(message = "Password is required")
     private String password;
 
+    @Builder.Default
     private User.Role role = User.Role.USER;
 }
