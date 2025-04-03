@@ -1,6 +1,7 @@
 package com.simplesdental.product.controller;
 
 import com.simplesdental.product.dto.RegisterRequest;
+import com.simplesdental.product.dto.UpdateUserRequest;
 import com.simplesdental.product.dto.UserResponse;
 import com.simplesdental.product.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,5 +51,30 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(userService.createUser(request));
+    }
+
+    @Operation(summary = "Atualizar usuário", description = "Atualiza um usuário existente")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Usuário não encontrado"),
+        @ApiResponse(responseCode = "400", description = "Dados inválidos ou email já existe"),
+        @ApiResponse(responseCode = "403", description = "Sem permissão")
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest request) {
+        return ResponseEntity.ok(userService.updateUser(id, request));
+    }
+
+    @Operation(summary = "Excluir usuário", description = "Remove um usuário existente")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Usuário removido com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Usuário não encontrado"),
+        @ApiResponse(responseCode = "403", description = "Sem permissão"),
+        @ApiResponse(responseCode = "400", description = "Não é possível excluir o último admin")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 }
