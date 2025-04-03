@@ -375,11 +375,11 @@ http://localhost:8080/api/swagger-ui.html
 ### 9.7 Executando os Testes
 
 ```bash
-./mvnw test
+$env:JAVA_HOME = 'C:\Program Files\Java\jdk-17.0.10'; ./mvnw test
 ```
 
 Para ver o relatório de cobertura:
 ```bash
-./mvnw verify
+$env:JAVA_HOME = 'C:\Program Files\Java\jdk-17.0.10'; ./mvnw verify
 ```
 O relatório será gerado em: `target/site/jacoco/index.html`
