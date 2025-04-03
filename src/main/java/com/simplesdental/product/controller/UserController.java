@@ -42,6 +42,17 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
 
+    @Operation(summary = "Buscar usuário", description = "Retorna um usuário pelo ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Usuário encontrado"),
+        @ApiResponse(responseCode = "404", description = "Usuário não encontrado"),
+        @ApiResponse(responseCode = "403", description = "Sem permissão")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
     @Operation(summary = "Criar usuário", description = "Cria um novo usuário (ADMIN ou USER)")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Usuário criado com sucesso"),

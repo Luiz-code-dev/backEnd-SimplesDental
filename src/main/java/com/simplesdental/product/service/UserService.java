@@ -76,6 +76,20 @@ public class UserService {
         logger.info("User deleted successfully: {}", id);
     }
 
+    @Transactional(readOnly = true)
+    public UserResponse getUserById(Long id) {
+        logger.debug("Getting user by id: {}", id);
+        
+        var user = userRepository.findById(id)
+                .orElseThrow(() -> {
+                    logger.warn("User not found with id: {}", id);
+                    return new IllegalArgumentException("User not found");
+                });
+
+        logger.debug("User found successfully: {}", id);
+        return UserResponse.fromUser(user);
+    }
+
     @Transactional
     public UserResponse updateUser(Long id, UpdateUserRequest request) {
         logger.debug("Updating user with id: {}", id);
